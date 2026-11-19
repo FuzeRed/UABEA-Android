@@ -21,7 +21,9 @@ jobs:
           java-version: 17
 
       - name: Install Android workload
-        run: dotnet workload install android
+        run: |
+          dotnet --version
+          dotnet workload install android
 
       - name: Build APK
         run: dotnet publish UABEAvalonia.Android/UABEAvalonia.Android.csproj -c Release -f net8.0-android -o out
