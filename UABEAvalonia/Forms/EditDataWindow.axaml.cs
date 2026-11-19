@@ -3,13 +3,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using AvaloniaEdit;
-#if !ANDROID
-using AvaloniaEdit.TextMate;
-#endif
 using System.IO;
 using System.Text;
+#if !ANDROID
+using AvaloniaEdit.TextMate;
 using TextMateSharp.Grammars;
 using UABEAvalonia.TextHighlighting;
+#endif
 
 namespace UABEAvalonia
 {
