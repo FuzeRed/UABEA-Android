@@ -20,6 +20,12 @@
     <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
     <AndroidPackageFormat>apk</AndroidPackageFormat>
     <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <!-- no trimming: ILLink can't find the xaml-compiled root assembly, and UABEA uses reflection
+         (plugin discovery, json) that trimming could break anyway -->
+    <PublishTrimmed>false</PublishTrimmed>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <RunAOTCompilation>false</RunAOTCompilation>
+    <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
     <RuntimeIdentifier>android-arm64</RuntimeIdentifier>
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
     <NoWarn>$(NoWarn);NETSDK1202;NU1903;NU1902;CA1416;CS8618;CS8600;CS8602;CS8603;CS8604;CS8625;CS0618;CS0067;CS0168;CS0169;CS0219;CS0649;CS0414</NoWarn>
