@@ -67,6 +67,12 @@ namespace UABEAvalonia
             return result is T t ? t : default!;
         }
 
+        /// <summary>Takes the window off screen without closing it (it can still be Close()d later).</summary>
+        public void Hide()
+        {
+            Host?.HideWindow(this);
+        }
+
         public void Activate()
         {
             Host?.BringToFront(this);
@@ -88,7 +94,7 @@ namespace UABEAvalonia
             Host.CloseWindow(this, dialogResult);
         }
 
-        private Task Display(Window? owner)
+        private Task<object?> Display(Window? owner)
         {
             WindowHost? host = owner?.Host ?? Host ?? WindowHost.Current;
             if (host == null)

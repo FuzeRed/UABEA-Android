@@ -19,12 +19,13 @@ namespace UABEAvalonia
 
         public override void OnFrameworkInitializationCompleted()
         {
+#if !ANDROID
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow();
             }
-#if ANDROID
-            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
+#else
+            if (ApplicationLifetime is ISingleViewApplicationLifetime singleView)
             {
                 // android has no real windows: UABEA's "windows" are stacked inside one view
                 var host = new WindowHost();

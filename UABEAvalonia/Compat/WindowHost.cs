@@ -18,6 +18,7 @@ namespace UABEAvalonia
         public static WindowHost? Current { get; set; }
 
         private readonly List<Window> stack = new List<Window>();
+        private readonly List<Window> hidden = new List<Window>();
         private readonly TextBlock titleText;
         private readonly Button backButton;
         private readonly Border body;
@@ -93,11 +94,27 @@ namespace UABEAvalonia
 
         internal void BringToFront(Window w)
         {
-            if (!stack.Contains(w))
+            if (!stack.Contains(w) && !hidden.Contains(w))
                 return;
+            hidden.Remove(w);
             stack.Remove(w);
             stack.Add(w);
             ShowTop();
+        }
+
+        internal void HideWindow(Window w)
+        {
+            if (!stack.Contains(w))
+                return;
+            bool wasTop = w == Top;
+            stack.Remove(w);
+            hidden.Add(w);
+            if (wasTop)
+            {
+                if (w.Parent is ScrollViewer sv)
+                    sv.Content = null;
+                ShowTop();
+            }
         }
 
         internal void RefreshTitle(Window w)
@@ -134,7 +151,7 @@ namespace UABEAvalonia
 
         internal void CloseWindow(Window w, object? result)
         {
-            if (w.IsClosed || !stack.Contains(w))
+            if (w.IsClosed || (!stack.Contains(w) && !hidden.Contains(w)))
                 return;
 
             // window may veto (e.g. "unsaved changes" prompts)
@@ -144,6 +161,7 @@ namespace UABEAvalonia
             bool wasTop = w == Top;
             w.IsClosed = true;
             stack.Remove(w);
+            hidden.Remove(w);
 
             if (wasTop)
             {
