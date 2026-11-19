@@ -1,0 +1,72 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Android head for UABEA. The desktop sources (UABEAvalonia + the 4 plugins) are compiled
+    straight into this app (linked, not copied), so there is one code base.
+    Assembly name is kept as "UABEAvalonia" so the shared XAML (assembly=UABEAvalonia) and
+    avares://UABEAvalonia/... resource URIs keep working.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0-android</TargetFramework>
+    <SupportedOSPlatformVersion>24</SupportedOSPlatformVersion>
+    <OutputType>Exe</OutputType>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <AssemblyName>UABEAvalonia</AssemblyName>
+    <RootNamespace>UABEAvalonia</RootNamespace>
+    <ApplicationId>com.nesrak1.uabea</ApplicationId>
+    <ApplicationTitle>UABEA</ApplicationTitle>
+    <ApplicationVersion>1</ApplicationVersion>
+    <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+    <AndroidPackageFormat>apk</AndroidPackageFormat>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <RuntimeIdentifiers>android-arm64;android-arm;android-x64</RuntimeIdentifiers>
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+    <NoWarn>$(NoWarn);CA1416;CS8618;CS8600;CS8602;CS8603;CS8604;CS8625;CS0618;CS0067;CS0168;CS0169;CS0219;CS0649;CS0414</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.0.1" />
+    <PackageReference Include="Avalonia.Android" Version="11.0.1" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="11.0.1" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.0.1" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.1" />
+    <PackageReference Include="Avalonia.Themes.Simple" Version="11.0.1" />
+    <PackageReference Include="AssetRipper.TextureDecoder" Version="1.2.0" />
+    <PackageReference Include="Fmod5Sharp" Version="3.0.1" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3-beta1" />
+    <PackageReference Include="Samboy063.LibCpp2IL" Version="2022.0.7.2" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+    <!-- no AvaloniaEdit.TextMate: it needs a native oniguruma lib that has no android build -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="AssetsTools.NET"><HintPath>..\Libs\AssetsTools.NET.dll</HintPath></Reference>
+    <Reference Include="AssetsTools.NET.Cpp2IL"><HintPath>..\Libs\AssetsTools.NET.Cpp2IL.dll</HintPath></Reference>
+    <Reference Include="AssetsTools.NET.MonoCecil"><HintPath>..\Libs\AssetsTools.NET.MonoCecil.dll</HintPath></Reference>
+    <Reference Include="AssetsTools.NET.Texture"><HintPath>..\Libs\AssetsTools.NET.Texture.dll</HintPath></Reference>
+  </ItemGroup>
+
+  <!-- ===== shared UABEA sources (desktop app, minus desktop-only entry points) ===== -->
+  <ItemGroup>
+    <Compile Include="..\UABEAvalonia\**\*.cs" Exclude="..\UABEAvalonia\Program.cs;..\UABEAvalonia\CommandLineHandler.cs;..\UABEAvalonia\TextHighlighting\**;..\UABEAvalonia\obj\**;..\UABEAvalonia\bin\**" LinkBase="UABEAvalonia" />
+    <AvaloniaXaml Include="..\UABEAvalonia\**\*.axaml" Exclude="..\UABEAvalonia\obj\**;..\UABEAvalonia\bin\**" Link="%(RecursiveDir)%(Filename)%(Extension)" />
+    <AvaloniaResource Include="..\UABEAvalonia\Assets\**" Exclude="..\UABEAvalonia\Assets\utxt.tmLanguage.json" Link="Assets\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <!-- ===== plugins, compiled in (android can't load plugin dlls from a folder) ===== -->
+  <ItemGroup>
+    <Compile Include="..\TextAssetPlugin\**\*.cs" Exclude="..\TextAssetPlugin\obj\**;..\TextAssetPlugin\bin\**" LinkBase="Plugins\TextAssetPlugin" />
+    <Compile Include="..\FontPlugin\**\*.cs" Exclude="..\FontPlugin\obj\**;..\FontPlugin\bin\**" LinkBase="Plugins\FontPlugin" />
+    <Compile Include="..\AudioClipPlugin\**\*.cs" Exclude="..\AudioClipPlugin\obj\**;..\AudioClipPlugin\bin\**" LinkBase="Plugins\AudioClipPlugin" />
+    <Compile Include="..\TexturePlugin\**\*.cs" Exclude="..\TexturePlugin\obj\**;..\TexturePlugin\bin\**" LinkBase="Plugins\TexturePlugin" />
+    <AvaloniaXaml Include="..\TexturePlugin\EditDialog.axaml" Link="Plugins\TexturePlugin\EditDialog.axaml" />
+    <Compile Include="..\Shared\PluginGlobalUsings.cs" Link="PluginGlobalUsings.cs" />
+  </ItemGroup>
+
+  <!-- classdata.tpk is copied to the app's private storage on first start (see MainActivity) -->
+  <ItemGroup>
+    <AndroidAsset Include="..\ReleaseFiles\classdata.tpk" Link="Assets\classdata.tpk" />
+  </ItemGroup>
+</Project>
